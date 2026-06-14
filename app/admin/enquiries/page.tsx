@@ -1,5 +1,6 @@
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, Trash2 } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { deleteEnquiry } from "@/lib/actions";
 import { getEnquiries } from "@/lib/cms";
 
 export default async function AdminEnquiriesPage() {
@@ -16,7 +17,7 @@ export default async function AdminEnquiriesPage() {
 
         <div className="mt-8 grid gap-4">
           {enquiries.length ? enquiries.map((item) => (
-            <article key={item.email} className="rounded-lg border border-[#d9e7f5] bg-white p-5 shadow-sm">
+            <article key={item.id} className="rounded-lg border border-[#d9e7f5] bg-white p-5 shadow-sm">
               <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
@@ -36,6 +37,16 @@ export default async function AdminEnquiriesPage() {
                     <Mail className="h-4 w-4" aria-hidden="true" />
                     {item.email}
                   </a>
+                  <form action={deleteEnquiry} className="pt-2">
+                    <input type="hidden" name="id" value={item.id} />
+                    <button
+                      className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-[#ffd0c7] px-3 text-xs font-bold text-[#b42318] hover:bg-[#fff4f2]"
+                      aria-label={`Delete enquiry from ${item.name}`}
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      Delete
+                    </button>
+                  </form>
                 </div>
               </div>
             </article>

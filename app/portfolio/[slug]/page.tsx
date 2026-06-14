@@ -1,8 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
+
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, CheckCircle2, Quote } from "lucide-react";
+import { ArrowRight, CheckCircle2, ExternalLink, ImageIcon, PlayCircle, Quote } from "lucide-react";
 import { ClientLogoMarquee, logosFromPortfolioCases } from "@/components/client-logo-marquee";
 import { PublicShell } from "@/components/public-shell";
 import { Reveal } from "@/components/reveal";
@@ -12,6 +14,43 @@ import { site } from "@/lib/site-data";
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+function getVideoEmbedUrl(url: string) {
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.replace("www.", "");
+
+    if (hostname === "youtu.be") {
+      const videoId = parsedUrl.pathname.split("/").filter(Boolean)[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    }
+
+    if (hostname.endsWith("youtube.com")) {
+      const watchId = parsedUrl.searchParams.get("v");
+      const pathParts = parsedUrl.pathname.split("/").filter(Boolean);
+      const embedId = watchId || (pathParts[0] === "shorts" || pathParts[0] === "embed" ? pathParts[1] : "");
+      return embedId ? `https://www.youtube.com/embed/${embedId}` : null;
+    }
+
+    if (hostname.endsWith("vimeo.com")) {
+      const videoId = parsedUrl.pathname.split("/").filter(Boolean)[0];
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function readableLink(url: string) {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.hostname.replace("www.", "");
+  } catch {
+    return url;
+  }
+}
 
 export async function generateStaticParams() {
   const portfolioCases = await getPortfolioCases();
@@ -47,6 +86,11 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
   const clientLogos = logosFromPortfolioCases(portfolioCases);
   const heroLogo = item.logoImage ?? site.logo;
   const heroLogoAlt = item.logoImage ? `${item.clientName} logo` : "Zigo Digital logo";
+  const galleryImages = item.galleryImages ?? [];
+  const videoUrls = item.videoUrls ?? [];
+  const resultImageUrls = item.resultImageUrls ?? [];
+  const websiteLinks = item.websiteLinks ?? [];
+  const hasProofMedia = Boolean(galleryImages.length || videoUrls.length || resultImageUrls.length || websiteLinks.length);
 
   return (
     <PublicShell>
@@ -199,6 +243,128 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
         </div>
       </section>
 
+      {hasProofMedia ? (
+        <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <Reveal>
+              <div className="max-w-3xl">
+                <p className="text-sm font-bold uppercase text-[#c2932e]">Work Proof</p>
+                <h2 className="mt-3 text-3xl font-black text-[#0b2447]">Real creative, campaign, and result assets from this client work.</h2>
+                <p className="mt-4 text-sm leading-6 text-[#526170]">
+                  Videos, screenshots, ad results, and website links added from the admin panel appear here automatically.
+                </p>
+              </div>
+            </Reveal>
+
+            {videoUrls.length ? (
+              <Reveal delay={0.05}>
+                <div className="mt-8 grid gap-5 lg:grid-cols-2">
+                  {videoUrls.map((url) => {
+                    const embedUrl = getVideoEmbedUrl(url);
+
+                    return (
+                      <div key={url} className="overflow-hidden rounded-lg border border-[#d9e7f5] bg-[#fbfdff] shadow-sm">
+                        {embedUrl ? (
+                          <iframe
+                            src={embedUrl}
+                            title={`${item.clientName} work video`}
+                            className="aspect-video w-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                          />
+                        ) : (
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex min-h-56 flex-col items-center justify-center gap-3 p-6 text-center hover:bg-[#eaf4ff]"
+                          >
+                            <PlayCircle className="h-10 w-10 text-[#0b5f9c]" aria-hidden="true" />
+                            <span className="text-sm font-bold text-[#0b2447]">Open video proof</span>
+                            <span className="text-xs font-semibold text-[#667789]">{readableLink(url)}</span>
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </Reveal>
+            ) : null}
+
+            {galleryImages.length ? (
+              <Reveal delay={0.1}>
+                <div className="mt-8">
+                  <div className="mb-4 flex items-center gap-2 text-sm font-black uppercase text-[#0b2447]">
+                    <ImageIcon className="h-4 w-4 text-[#0b5f9c]" aria-hidden="true" />
+                    Work images and screenshots
+                  </div>
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {galleryImages.map((url) => (
+                      <a
+                        key={url}
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group overflow-hidden rounded-lg border border-[#d9e7f5] bg-[#fbfdff] shadow-sm"
+                      >
+                        <img
+                          src={url}
+                          alt={`${item.clientName} work proof`}
+                          className="h-64 w-full object-contain p-3 transition group-hover:scale-[1.02]"
+                          loading="lazy"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            ) : null}
+
+            {resultImageUrls.length ? (
+              <Reveal delay={0.15}>
+                <div className="mt-8 rounded-lg border border-[#d9e7f5] bg-[#fbfdff] p-5">
+                  <p className="text-sm font-black uppercase text-[#c2932e]">Ad result proof</p>
+                  <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                    {resultImageUrls.map((url) => (
+                      <a key={url} href={url} target="_blank" rel="noreferrer" className="overflow-hidden rounded-lg bg-white p-3 shadow-sm">
+                        <img
+                          src={url}
+                          alt={`${item.clientName} campaign result`}
+                          className="h-72 w-full object-contain"
+                          loading="lazy"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            ) : null}
+
+            {websiteLinks.length ? (
+              <Reveal delay={0.2}>
+                <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {websiteLinks.map((url) => (
+                    <a
+                      key={url}
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center justify-between gap-4 rounded-lg border border-[#d9e7f5] bg-[#fbfdff] p-5 text-sm font-bold text-[#0b2447] shadow-sm transition hover:-translate-y-1 hover:border-[#0b5f9c] hover:text-[#0b5f9c] hover:shadow-lg hover:shadow-[#0b5f9c]/10"
+                    >
+                      <span>
+                        <span className="block text-xs uppercase text-[#c2932e]">Client / project link</span>
+                        <span className="mt-1 block">{readableLink(url)}</span>
+                      </span>
+                      <ExternalLink className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    </a>
+                  ))}
+                </div>
+              </Reveal>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
       <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 md:grid-cols-3">
@@ -220,10 +386,12 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 ))}
               </div>
             </div>
-            <div className="rounded-lg border border-[#d9e7f5] bg-[#fbfdff] p-6">
-              <Quote className="h-8 w-8 text-[#c2932e]" aria-hidden="true" />
-              <p className="mt-4 text-lg font-bold leading-8 text-[#0b2447]">{item.testimonial}</p>
-            </div>
+            {item.testimonial ? (
+              <div className="rounded-lg border border-[#d9e7f5] bg-[#fbfdff] p-6">
+                <Quote className="h-8 w-8 text-[#c2932e]" aria-hidden="true" />
+                <p className="mt-4 text-lg font-bold leading-8 text-[#0b2447]">{item.testimonial}</p>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

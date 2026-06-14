@@ -162,6 +162,10 @@ function mapPortfolioCase(record: DataRecord): PortfolioCase {
     resultsSummary: readString(record, "results_summary"),
     metrics: parseMetricsSummary(metricsSummary),
     coverLabel: readString(record, "cover_label", clientName),
+    galleryImages: readArray(record, "gallery_images"),
+    videoUrls: readArray(record, "video_urls"),
+    resultImageUrls: readArray(record, "result_image_urls"),
+    websiteLinks: readArray(record, "website_links"),
     testimonial: readString(record, "testimonial"),
     published: Boolean(record.published),
   };
@@ -402,6 +406,12 @@ export async function upsertLocalTeamMember(item: TeamMember) {
   await writeLocalCms(data);
 }
 
+export async function deleteLocalTeamMember(id: string) {
+  const data = await readLocalCms();
+  data.teamMembers = data.teamMembers.filter((item) => item.id !== id);
+  await writeLocalCms(data);
+}
+
 export async function upsertLocalService(item: Service) {
   const data = await readLocalCms();
   const index = data.services.findIndex((entry) => entry.id === item.id || entry.slug === item.slug);
@@ -418,6 +428,12 @@ export async function upsertLocalService(item: Service) {
 export async function addLocalEnquiry(item: Enquiry) {
   const data = await readLocalCms();
   data.enquiries.unshift(item);
+  await writeLocalCms(data);
+}
+
+export async function deleteLocalEnquiry(id: string) {
+  const data = await readLocalCms();
+  data.enquiries = data.enquiries.filter((item) => item.id !== id);
   await writeLocalCms(data);
 }
 

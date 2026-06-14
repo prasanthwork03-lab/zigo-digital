@@ -78,24 +78,26 @@ export function ContactForm() {
         </label>
       </div>
 
-      <label className="grid gap-2 text-sm font-bold text-[#0b2447]">
-        Service Needed
-        <select
-          name="service_needed"
-          className="h-12 rounded-lg border border-[#d9e7f5] bg-white px-4 text-sm font-medium outline-none transition focus:border-[#0b5f9c] focus:ring-4 focus:ring-[#0b5f9c]/10"
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Select a service
-          </option>
+      <fieldset className="grid gap-3">
+        <legend className="text-sm font-bold text-[#0b2447]">Service Needed</legend>
+        <div className="grid gap-3 rounded-lg border border-[#d9e7f5] bg-[#fbfdff] p-4 sm:grid-cols-2">
           {services.map((service) => (
-            <option key={service} value={service}>
-              {service}
-            </option>
+            <label
+              key={service}
+              className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-[#d9e7f5] bg-white px-3 py-2 text-sm font-bold text-[#0b2447] transition hover:border-[#0b5f9c] hover:bg-[#eaf4ff]"
+            >
+              <input
+                type="checkbox"
+                name="service_needed"
+                value={service}
+                className="h-4 w-4 rounded border-[#b9ccdf] text-[#0b5f9c] focus:ring-[#0b5f9c]"
+              />
+              <span>{service}</span>
+            </label>
           ))}
-        </select>
+        </div>
         <FieldError errors={state.fieldErrors?.service_needed} />
-      </label>
+      </fieldset>
 
       <label className="grid gap-2 text-sm font-bold text-[#0b2447]">
         Message

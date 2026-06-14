@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { PublicShell } from "@/components/public-shell";
 import { Reveal, Stagger, StaggerItem } from "@/components/reveal";
 import { SectionHeading } from "@/components/section-heading";
@@ -58,15 +57,6 @@ export default async function TeamPage() {
               </StaggerItem>
             ))}
           </Stagger>
-          <div className="mt-10 text-center">
-            <Link
-              href="/contact"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#0b5f9c] px-6 text-sm font-bold text-white hover:bg-[#0b2447]"
-            >
-              Work With Zigo Digital
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
         </div>
       </section>
     </PublicShell>

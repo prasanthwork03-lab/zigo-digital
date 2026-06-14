@@ -6,7 +6,9 @@ import { z } from "zod";
 import {
   addLocalEnquiry,
   deleteLocalBlogPost,
+  deleteLocalEnquiry,
   deleteLocalPortfolioCase,
+  deleteLocalTeamMember,
   parseMetricsSummary,
   upsertLocalBlogPost,
   upsertLocalPortfolioCase,
@@ -54,12 +56,19 @@ export async function submitEnquiry(
   _prevState: EnquiryFormState,
   formData: FormData,
 ): Promise<EnquiryFormState> {
+  const selectedServices = formData
+    .getAll("service_needed")
+    .map(String)
+    .map((service) => service.trim())
+    .filter(Boolean);
+  const serviceNeeded = selectedServices.join(", ");
+
   const parsed = enquirySchema.safeParse({
     name: formData.get("name"),
     business_name: formData.get("business_name"),
     phone: formData.get("phone"),
     email: formData.get("email"),
-    service_needed: formData.get("service_needed"),
+    service_needed: serviceNeeded,
     message: formData.get("message"),
   });
 
@@ -137,6 +146,10 @@ export async function savePortfolioCase(formData: FormData) {
     resultsSummary: String(formData.get("results_summary") || ""),
     metrics: parseMetricsSummary(metricsSummary),
     coverLabel: String(formData.get("cover_label") || title),
+    galleryImages: listFromLongForm(formData.get("gallery_images")),
+    videoUrls: listFromLongForm(formData.get("video_urls")),
+    resultImageUrls: listFromLongForm(formData.get("result_image_urls")),
+    websiteLinks: listFromLongForm(formData.get("website_links")),
     testimonial: String(formData.get("testimonial") || ""),
     published: boolFromForm(formData.get("published")),
   };
@@ -170,7 +183,10 @@ export async function savePortfolioCase(formData: FormData) {
     },
     cover_label: String(formData.get("cover_label") || title),
     cover_image_url: "",
-    gallery_images: listFromForm(formData.get("gallery_images")),
+    gallery_images: listFromLongForm(formData.get("gallery_images")),
+    video_urls: listFromLongForm(formData.get("video_urls")),
+    result_image_urls: listFromLongForm(formData.get("result_image_urls")),
+    website_links: listFromLongForm(formData.get("website_links")),
     testimonial: String(formData.get("testimonial") || ""),
     published: boolFromForm(formData.get("published")),
     updated_at: new Date().toISOString(),
@@ -182,8 +198,11 @@ export async function savePortfolioCase(formData: FormData) {
     redirect(`${redirectTo}?error=${encodeURIComponent(error.message)}`);
   }
 
+  revalidatePath("/");
   revalidatePath("/portfolio");
   revalidatePath(`/portfolio/${slug}`);
+  revalidatePath("/admin/portfolio");
+  revalidatePath("/admin/dashboard");
   redirect(redirectTo);
 }
 
@@ -208,7 +227,35 @@ export async function deletePortfolioCase(formData: FormData) {
     redirect(`${redirectTo}?error=${encodeURIComponent(error.message)}`);
   }
 
+  revalidatePath("/");
   revalidatePath("/portfolio");
+  revalidatePath("/admin/portfolio");
+  revalidatePath("/admin/dashboard");
+  redirect(redirectTo);
+}
+
+export async function deleteEnquiry(formData: FormData) {
+  const supabase = createSupabaseAdminClient();
+  const id = String(formData.get("id") || "");
+  const redirectTo = "/admin/enquiries";
+
+  if (!supabase || !id) {
+    if (id) {
+      await deleteLocalEnquiry(id);
+      revalidatePath("/admin/enquiries");
+      revalidatePath("/admin/dashboard");
+    }
+    redirect(`${redirectTo}?deleted=local`);
+  }
+
+  const { error } = await supabase.from("enquiries").delete().eq("id", id);
+
+  if (error) {
+    redirect(`${redirectTo}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin/enquiries");
+  revalidatePath("/admin/dashboard");
   redirect(redirectTo);
 }
 
@@ -257,6 +304,35 @@ export async function saveTeamMember(formData: FormData) {
   }
 
   revalidatePath("/team");
+  redirect(redirectTo);
+}
+
+export async function deleteTeamMember(formData: FormData) {
+  const supabase = createSupabaseAdminClient();
+  const id = String(formData.get("id") || "");
+  const redirectTo = "/admin/team";
+
+  if (!supabase || !id) {
+    if (id) {
+      await deleteLocalTeamMember(id);
+      revalidatePath("/");
+      revalidatePath("/team");
+      revalidatePath("/admin/team");
+      revalidatePath("/admin/dashboard");
+    }
+    redirect(`${redirectTo}?deleted=local`);
+  }
+
+  const { error } = await supabase.from("team_members").delete().eq("id", id);
+
+  if (error) {
+    redirect(`${redirectTo}?error=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/team");
+  revalidatePath("/admin/team");
+  revalidatePath("/admin/dashboard");
   redirect(redirectTo);
 }
 

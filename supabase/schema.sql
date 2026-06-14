@@ -17,11 +17,20 @@ create table if not exists portfolio_cases (
   cover_label text,
   cover_image_url text,
   gallery_images text[] default '{}',
+  video_urls text[] default '{}',
+  result_image_urls text[] default '{}',
+  website_links text[] default '{}',
   testimonial text,
   published boolean default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+
+alter table portfolio_cases add column if not exists gallery_images text[] default '{}';
+alter table portfolio_cases add column if not exists video_urls text[] default '{}';
+alter table portfolio_cases add column if not exists result_image_urls text[] default '{}';
+alter table portfolio_cases add column if not exists website_links text[] default '{}';
+alter table portfolio_cases add column if not exists testimonial text;
 
 create table if not exists team_members (
   id uuid primary key default gen_random_uuid(),

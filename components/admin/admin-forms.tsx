@@ -27,6 +27,10 @@ function dateTimeValue(value?: string) {
   return Number.isNaN(date.getTime()) ? new Date().toISOString().slice(0, 16) : date.toISOString().slice(0, 16);
 }
 
+function multilineValue(value?: string[]) {
+  return value?.join("\n") ?? "";
+}
+
 export function PortfolioCaseForm({ item }: { item?: PortfolioCase }) {
   return (
     <form action={savePortfolioCase} className="grid gap-5 rounded-lg border border-[#d9e7f5] bg-white p-5 shadow-sm">
@@ -95,8 +99,43 @@ export function PortfolioCaseForm({ item }: { item?: PortfolioCase }) {
           <textarea name="execution" defaultValue={item?.execution.join("\n")} className={textareaClass()} />
         </Field>
       </div>
-      <Field label="Gallery image URLs, comma separated">
-        <input name="gallery_images" className={inputClass()} placeholder="https://..." />
+      <div className="rounded-lg border border-[#d9e7f5] bg-[#fbfdff] p-4">
+        <p className="text-sm font-black uppercase text-[#c2932e]">Proof media</p>
+        <p className="mt-2 text-sm leading-6 text-[#526170]">
+          Add one URL per line or separate by comma. These show automatically on the public case study page.
+        </p>
+      </div>
+      <Field label="Work image / screenshot URLs">
+        <textarea
+          name="gallery_images"
+          defaultValue={multilineValue(item?.galleryImages)}
+          className={textareaClass()}
+          placeholder={`https://...\nhttps://...`}
+        />
+      </Field>
+      <Field label="Video embed links, YouTube links, or Vimeo links">
+        <textarea
+          name="video_urls"
+          defaultValue={multilineValue(item?.videoUrls)}
+          className={textareaClass()}
+          placeholder={`https://www.youtube.com/watch?v=...\nhttps://vimeo.com/...`}
+        />
+      </Field>
+      <Field label="Meta Ads / Google Ads result screenshot URLs">
+        <textarea
+          name="result_image_urls"
+          defaultValue={multilineValue(item?.resultImageUrls)}
+          className={textareaClass()}
+          placeholder={`https://...\nhttps://...`}
+        />
+      </Field>
+      <Field label="Client website / landing page / automation links">
+        <textarea
+          name="website_links"
+          defaultValue={multilineValue(item?.websiteLinks)}
+          className={textareaClass()}
+          placeholder={`https://client-website.com\nhttps://automation-demo-link.com`}
+        />
       </Field>
       <Field label="Testimonial">
         <textarea name="testimonial" defaultValue={item?.testimonial} className={textareaClass()} />

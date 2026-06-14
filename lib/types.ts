@@ -28,6 +28,10 @@ export type PortfolioCase = {
   resultsSummary: string;
   metrics: { label: string; value: string }[];
   coverLabel: string;
+  galleryImages?: string[];
+  videoUrls?: string[];
+  resultImageUrls?: string[];
+  websiteLinks?: string[];
   testimonial: string;
   published: boolean;
 };

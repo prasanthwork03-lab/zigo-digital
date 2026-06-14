@@ -3,6 +3,12 @@ setlocal
 
 cd /d "%~dp0"
 
+if exist ".env.local" (
+  for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env.local") do (
+    if not "%%A"=="" set "%%A=%%B"
+  )
+)
+
 set "NODE_EXE=%USERPROFILE%\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe"
 
 where node >nul 2>nul

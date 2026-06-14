@@ -41,6 +41,7 @@ yarn-error.log*
 # local runtime logs and generated document previews
 *.log
 /build-docs/
+/.codex-pydeps/
 
 # typescript
 *.tsbuildinfo

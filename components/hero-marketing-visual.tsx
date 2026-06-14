@@ -2,13 +2,20 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { BarChart3, MousePointerClick, Search, Share2, Zap } from "lucide-react";
+import { BarChart3, MousePointerClick, Search, Zap } from "lucide-react";
 
 const orbitCards = [
-  { label: "Lead Flow", value: "+42%", icon: MousePointerClick, className: "left-3 top-5" },
-  { label: "SEO Reach", value: "3.8x", icon: Search, className: "right-4 top-10" },
-  { label: "Ad ROAS", value: "2.6x", icon: BarChart3, className: "left-5 bottom-16" },
-  { label: "Automation", value: "Live", icon: Zap, className: "right-6 bottom-8" },
+  { label: "Lead flow", icon: MousePointerClick, className: "left-5 top-8" },
+  { label: "SEO reach", icon: Search, className: "right-7 top-12" },
+  { label: "Ad performance", icon: BarChart3, className: "left-8 bottom-16" },
+  { label: "Automation", icon: Zap, className: "right-8 bottom-10" },
+];
+
+const pulsePoints = [
+  "left-[22%] top-[30%]",
+  "right-[24%] top-[28%]",
+  "left-[42%] bottom-[29%]",
+  "right-[30%] bottom-[23%]",
 ];
 
 export function HeroMarketingVisual() {
@@ -34,29 +41,32 @@ export function HeroMarketingVisual() {
             className="aspect-[4/3] w-full object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#071827]/75 via-transparent to-white/5" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071827]/25 via-transparent to-white/0" />
 
           <motion.div
-            className="absolute left-6 top-6 flex items-center gap-3 rounded-lg border border-white/15 bg-white/12 px-4 py-3 text-white shadow-xl backdrop-blur"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+            aria-hidden="true"
+            className="absolute inset-y-0 left-[-45%] w-1/3 rotate-12 bg-gradient-to-r from-transparent via-white/30 to-transparent blur-sm"
+            animate={{ x: ["0%", "430%"] }}
+            transition={{ duration: 5.5, repeat: Infinity, repeatDelay: 1.6, ease: "easeInOut" }}
             style={{ willChange: "transform" }}
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#f2d68b] text-[#071827]">
-              <Share2 className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <span>
-              <span className="block text-xs font-bold text-[#f2d68b]">Digital Growth</span>
-              <span className="block text-sm font-black">Content to Conversion</span>
-            </span>
-          </motion.div>
+          />
 
-          <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-            <p className="text-sm font-bold text-[#f2d68b]">Animated growth system</p>
-            <h2 className="mt-2 max-w-sm text-2xl font-black leading-tight">
-              Ads, websites, SEO, automation, and leads working together.
-            </h2>
-          </div>
+          <motion.div
+            aria-hidden="true"
+            className="absolute left-[14%] top-[22%] h-20 w-20 rounded-full border border-cyan-200/45"
+            animate={{ scale: [1, 1.28, 1], opacity: [0.25, 0.65, 0.25] }}
+            transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {pulsePoints.map((point, index) => (
+            <motion.span
+              key={point}
+              aria-hidden="true"
+              className={`absolute ${point} h-3 w-3 rounded-full bg-[#f2d68b] shadow-[0_0_24px_rgba(242,214,139,0.8)]`}
+              animate={{ scale: [1, 1.9, 1], opacity: [0.7, 0.15, 0.7] }}
+              transition={{ duration: 2.4 + index * 0.3, repeat: Infinity, ease: "easeInOut" }}
+            />
+          ))}
         </motion.div>
       </div>
 
@@ -66,7 +76,8 @@ export function HeroMarketingVisual() {
         return (
           <motion.div
             key={card.label}
-            className={`absolute ${card.className} hidden min-w-32 rounded-lg border border-white/70 bg-white/92 p-3 shadow-xl shadow-[#0b2447]/10 backdrop-blur sm:block`}
+            aria-label={card.label}
+            className={`absolute ${card.className} hidden h-14 w-14 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#0b5f9c] shadow-xl shadow-[#0b2447]/10 backdrop-blur sm:flex`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: [0, index % 2 === 0 ? -10 : 10, 0] }}
             transition={{
@@ -75,15 +86,7 @@ export function HeroMarketingVisual() {
             }}
             style={{ willChange: "transform" }}
           >
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eaf4ff] text-[#0b5f9c]">
-                <Icon className="h-4 w-4" aria-hidden="true" />
-              </span>
-              <span>
-                <span className="block text-xs font-bold text-[#667789]">{card.label}</span>
-                <span className="block text-lg font-black text-[#0b2447]">{card.value}</span>
-              </span>
-            </div>
+            <Icon className="h-6 w-6" aria-hidden="true" />
           </motion.div>
         );
       })}

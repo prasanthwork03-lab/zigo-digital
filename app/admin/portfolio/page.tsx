@@ -4,7 +4,20 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { deletePortfolioCase } from "@/lib/actions";
 import { getPortfolioCases } from "@/lib/cms";
 
-export default async function AdminPortfolioPage() {
+type AdminPortfolioPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+function queryValue(params: Record<string, string | string[] | undefined> | undefined, key: string) {
+  const value = params?.[key];
+
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function AdminPortfolioPage({ searchParams }: AdminPortfolioPageProps) {
+  const params = await searchParams;
+  const error = queryValue(params, "error");
+  const saved = queryValue(params, "saved");
   const portfolioCases = await getPortfolioCases();
 
   return (
@@ -26,6 +39,18 @@ export default async function AdminPortfolioPage() {
             New Case Study
           </Link>
         </div>
+
+        {error ? (
+          <div className="mt-6 rounded-lg border border-[#ffd0c7] bg-[#fff4f2] px-5 py-4 text-sm font-semibold leading-6 text-[#b42318]">
+            Portfolio save failed: {error}
+          </div>
+        ) : null}
+
+        {saved === "media-json-fallback" ? (
+          <div className="mt-6 rounded-lg border border-[#b7e4cd] bg-[#f0fbf5] px-5 py-4 text-sm font-semibold leading-6 text-[#166534]">
+            Case study saved and published. Media links were saved in the backup JSON field because the Supabase media columns are not added yet.
+          </div>
+        ) : null}
 
         <div className="mt-8 overflow-hidden rounded-lg border border-[#d9e7f5] bg-white shadow-sm">
           <div className="grid gap-0">

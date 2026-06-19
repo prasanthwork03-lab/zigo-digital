@@ -37,14 +37,14 @@ export function PortfolioCaseForm({ item }: { item?: PortfolioCase }) {
       <input type="hidden" name="id" value={item?.id ?? ""} />
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Client name">
-          <input name="client_name" defaultValue={item?.clientName} className={inputClass()} />
+          <input name="client_name" defaultValue={item?.clientName} className={inputClass()} required />
         </Field>
         <Field label="Slug">
           <input name="slug" defaultValue={item?.slug} className={inputClass()} />
         </Field>
       </div>
       <Field label="Industry">
-        <input name="industry" defaultValue={item?.industry} className={inputClass()} />
+        <input name="industry" defaultValue={item?.industry} className={inputClass()} required />
       </Field>
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Client logo URL">
@@ -60,7 +60,7 @@ export function PortfolioCaseForm({ item }: { item?: PortfolioCase }) {
         </Field>
       </div>
       <Field label="Short description">
-        <textarea name="short_description" defaultValue={item?.shortDescription} className={textareaClass()} />
+        <textarea name="short_description" defaultValue={item?.shortDescription} className={textareaClass()} required />
       </Field>
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Problem">

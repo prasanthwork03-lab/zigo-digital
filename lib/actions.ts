@@ -52,6 +52,15 @@ const listFromLongForm = (value: FormDataEntryValue | null) =>
 const isUuid = (value: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 
+const missingPortfolioMediaColumns = (error: { code?: string; message?: string }) => {
+  const message = String(error.message || "").toLowerCase();
+
+  return (
+    error.code === "PGRST204" ||
+    ["video_urls", "result_image_urls", "website_links"].some((column) => message.includes(column))
+  );
+};
+
 export async function submitEnquiry(
   _prevState: EnquiryFormState,
   formData: FormData,
@@ -129,6 +138,10 @@ export async function savePortfolioCase(formData: FormData) {
   const redirectTo = "/admin/portfolio";
   const id = String(formData.get("id") || crypto.randomUUID());
   const metricsSummary = String(formData.get("metrics_json") || "");
+  const galleryImages = listFromLongForm(formData.get("gallery_images"));
+  const videoUrls = listFromLongForm(formData.get("video_urls"));
+  const resultImageUrls = listFromLongForm(formData.get("result_image_urls"));
+  const websiteLinks = listFromLongForm(formData.get("website_links"));
   const localPayload = {
     id,
     clientName: title,
@@ -146,10 +159,10 @@ export async function savePortfolioCase(formData: FormData) {
     resultsSummary: String(formData.get("results_summary") || ""),
     metrics: parseMetricsSummary(metricsSummary),
     coverLabel: String(formData.get("cover_label") || title),
-    galleryImages: listFromLongForm(formData.get("gallery_images")),
-    videoUrls: listFromLongForm(formData.get("video_urls")),
-    resultImageUrls: listFromLongForm(formData.get("result_image_urls")),
-    websiteLinks: listFromLongForm(formData.get("website_links")),
+    galleryImages,
+    videoUrls,
+    resultImageUrls,
+    websiteLinks,
     testimonial: String(formData.get("testimonial") || ""),
     published: boolFromForm(formData.get("published")),
   };
@@ -180,13 +193,17 @@ export async function savePortfolioCase(formData: FormData) {
     results_summary: String(formData.get("results_summary") || ""),
     metrics_json: {
       summary: metricsSummary,
+      galleryImages,
+      videoUrls,
+      resultImageUrls,
+      websiteLinks,
     },
     cover_label: String(formData.get("cover_label") || title),
     cover_image_url: "",
-    gallery_images: listFromLongForm(formData.get("gallery_images")),
-    video_urls: listFromLongForm(formData.get("video_urls")),
-    result_image_urls: listFromLongForm(formData.get("result_image_urls")),
-    website_links: listFromLongForm(formData.get("website_links")),
+    gallery_images: galleryImages,
+    video_urls: videoUrls,
+    result_image_urls: resultImageUrls,
+    website_links: websiteLinks,
     testimonial: String(formData.get("testimonial") || ""),
     published: boolFromForm(formData.get("published")),
     updated_at: new Date().toISOString(),
@@ -195,6 +212,24 @@ export async function savePortfolioCase(formData: FormData) {
   const { error } = await supabase.from("portfolio_cases").upsert(payload);
 
   if (error) {
+    if (missingPortfolioMediaColumns(error)) {
+      const legacyPayload = Object.fromEntries(
+        Object.entries(payload).filter(([key]) => !["video_urls", "result_image_urls", "website_links"].includes(key)),
+      );
+      const { error: retryError } = await supabase.from("portfolio_cases").upsert(legacyPayload);
+
+      if (!retryError) {
+        revalidatePath("/");
+        revalidatePath("/portfolio");
+        revalidatePath(`/portfolio/${slug}`);
+        revalidatePath("/admin/portfolio");
+        revalidatePath("/admin/dashboard");
+        redirect(`${redirectTo}?saved=media-json-fallback`);
+      }
+
+      redirect(`${redirectTo}?error=${encodeURIComponent(retryError.message)}`);
+    }
+
     redirect(`${redirectTo}?error=${encodeURIComponent(error.message)}`);
   }
 

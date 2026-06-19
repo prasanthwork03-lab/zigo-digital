@@ -140,10 +140,24 @@ function metricSummaryFromJson(value: unknown) {
   return "";
 }
 
+function arrayFromJson(value: unknown, key: string) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return [];
+  }
+
+  const entry = (value as Record<string, unknown>)[key];
+
+  return Array.isArray(entry) ? entry.map(String).filter(Boolean) : [];
+}
+
 function mapPortfolioCase(record: DataRecord): PortfolioCase {
   const clientName = readString(record, "client_name");
   const slug = readString(record, "slug", slugify(clientName));
   const metricsSummary = metricSummaryFromJson(record.metrics_json);
+  const galleryImages = readArray(record, "gallery_images");
+  const videoUrls = readArray(record, "video_urls");
+  const resultImageUrls = readArray(record, "result_image_urls");
+  const websiteLinks = readArray(record, "website_links");
 
   return {
     id: readString(record, "id", crypto.randomUUID()),
@@ -162,10 +176,10 @@ function mapPortfolioCase(record: DataRecord): PortfolioCase {
     resultsSummary: readString(record, "results_summary"),
     metrics: parseMetricsSummary(metricsSummary),
     coverLabel: readString(record, "cover_label", clientName),
-    galleryImages: readArray(record, "gallery_images"),
-    videoUrls: readArray(record, "video_urls"),
-    resultImageUrls: readArray(record, "result_image_urls"),
-    websiteLinks: readArray(record, "website_links"),
+    galleryImages: galleryImages.length ? galleryImages : arrayFromJson(record.metrics_json, "galleryImages"),
+    videoUrls: videoUrls.length ? videoUrls : arrayFromJson(record.metrics_json, "videoUrls"),
+    resultImageUrls: resultImageUrls.length ? resultImageUrls : arrayFromJson(record.metrics_json, "resultImageUrls"),
+    websiteLinks: websiteLinks.length ? websiteLinks : arrayFromJson(record.metrics_json, "websiteLinks"),
     testimonial: readString(record, "testimonial"),
     published: Boolean(record.published),
   };

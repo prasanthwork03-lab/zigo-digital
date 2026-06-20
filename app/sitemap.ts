@@ -21,6 +21,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.75,
     },
+    {
+      url: `${siteUrl}/tools/lead-funnel-checker`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    },
   ];
 
   const caseRoutes = portfolioCases

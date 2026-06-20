@@ -56,7 +56,7 @@ export default function ToolsPage() {
             <SectionHeading
               eyebrow="Tools"
               title="Growth tools that turn confusion into clear next steps."
-              text="Start with a complete SEO audit report today. More tools for lead funnels, content planning, AI workflows, and marketing decisions will be added here."
+              text="Start with a complete SEO audit report or lead funnel check today. More tools for content planning, AI workflows, and marketing decisions will be added here."
               align="center"
               level="h1"
             />

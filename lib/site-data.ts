@@ -34,9 +34,9 @@ export const toolItems = [
   },
   {
     label: "Lead Funnel Checker",
-    href: "/tools",
-    description: "Coming soon: find missing steps between traffic and enquiry.",
-    status: "Soon",
+    href: "/tools/lead-funnel-checker",
+    description: "Find missing steps between traffic, enquiry, follow-up, and sales.",
+    status: "Live",
   },
   {
     label: "Content Idea Generator",

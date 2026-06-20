@@ -1,6 +1,90 @@
 {
   "portfolioCases": [
     {
+      "id": "raymond-dindigul-video-marketing",
+      "clientName": "Raymond Dindigul",
+      "slug": "raymond-dindigul-video-marketing",
+      "industry": "Men's Fashion Retail / Textile Showroom",
+      "logoImage": "https://res.cloudinary.com/domt6qtye/image/upload/v1781853784/download_2_naqo4v.png",
+      "shortDescription": "Raymond Dindigul partnered with us for professional video shooting, editing, and organic video reach marketing to improve brand visibility and attract more local customers through engaging social media content.",
+      "problem": "Raymond Dindigul needed consistent and high-quality video content to showcase their collections, store experience, offers, and brand presence. Their social media content required a more professional look to improve organic reach and customer engagement.",
+      "goal": "To create attractive promotional videos for Raymond Dindigul and increase organic reach through creative editing, product-focused storytelling, and regular social media video marketing.",
+      "solution": "We handled complete video production for Raymond Dindigul, including store shoot planning, product and model-focused video shooting, professional editing, reels creation, captions, and organic content marketing. The videos were designed to highlight the showroom, latest collections, customer experience, and brand value in a simple and engaging way.",
+      "servicesProvided": [
+        "Video Shooting",
+        "Video Editing",
+        "Reels Creation",
+        "Organic Video Marketing",
+        "Social Media Content",
+        "Brand Promotion"
+      ],
+      "platformsUsed": [
+        "Instagram",
+        "Facebook"
+      ],
+      "strategy": [
+        "Showcase Raymond Dindigul as a premium men's fashion destination.",
+        "Create short and engaging videos for organic reach.",
+        "Highlight latest collections, offers, and showroom experience.",
+        "Use reel-friendly editing to improve watch time.",
+        "Build local brand awareness through consistent content."
+      ],
+      "execution": [
+        "Planned video concepts based on showroom collections.",
+        "Captured professional store and product visuals.",
+        "Edited videos with music, text, transitions, and branding.",
+        "Created short reels suitable for Instagram and Facebook.",
+        "Optimized captions and posting style for organic reach.",
+        "Delivered videos for regular social media promotion."
+      ],
+      "resultsSummary": "The campaign helped Raymond Dindigul maintain a stronger social media presence with professional video content. Organic reach improved through engaging reels and promotional videos, helping the brand connect better with local customers and showcase its collections more effectively.",
+      "metrics": [
+        {
+          "label": "Improved organic video reach",
+          "value": "Updated"
+        },
+        {
+          "label": "Better audience engagement",
+          "value": "Updated"
+        },
+        {
+          "label": "Increased brand visibility",
+          "value": "Updated"
+        },
+        {
+          "label": "Consistent social media content",
+          "value": "Updated"
+        },
+        {
+          "label": "Stronger local customer awareness",
+          "value": "Updated"
+        }
+      ],
+      "coverLabel": "Video Shooting & Organic Marketing",
+      "galleryImages": [
+        "https://res.cloudinary.com/domt6qtye/image/upload/q_auto/f_auto/v1781939230/WhatsApp_Image_2026-06-20_at_8.45.07_AM_1_f342q1.jpg",
+        "https://res.cloudinary.com/domt6qtye/image/upload/q_auto/f_auto/v1781939224/WhatsApp_Image_2026-06-20_at_8.45.07_AM_kh3niu.jpg",
+        "https://res.cloudinary.com/domt6qtye/image/upload/q_auto/f_auto/v1781939224/WhatsApp_Image_2026-06-20_at_8.44.23_AM_capvf9.jpg",
+        "https://res.cloudinary.com/domt6qtye/image/upload/q_auto/f_auto/v1781939220/WhatsApp_Image_2026-06-20_at_8.44.23_AM_1_pqdx2g.jpg",
+        "https://res.cloudinary.com/domt6qtye/image/upload/q_auto/f_auto/v1781939262/WhatsApp_Image_2026-06-20_at_8.44.22_AM_toopkq.jpg",
+        "https://res.cloudinary.com/domt6qtye/image/upload/q_auto/f_auto/v1781939246/WhatsApp_Image_2026-06-20_at_8.44.25_AM_sg0kmb.jpg",
+        "https://res.cloudinary.com/domt6qtye/image/upload/q_auto/f_auto/v1781939251/WhatsApp_Image_2026-06-20_at_8.47.08_AM_mxtlps.jpg"
+      ],
+      "videoUrls": [
+        "https://res.cloudinary.com/domt6qtye/video/upload/q_auto/f_auto/v1781940092/WhatsApp_Video_2026-06-20_at_8.44.24_AM_cpjmnk.mp4",
+        "https://res.cloudinary.com/domt6qtye/video/upload/q_auto/f_auto/v1781940111/WhatsApp_Video_2026-06-20_at_8.50.00_AM_rwknu5.mp4",
+        "https://res.cloudinary.com/domt6qtye/video/upload/q_auto/f_auto/v1781939886/WhatsApp_Video_2026-06-20_at_8.44.21_AM_1_valcje.mp4",
+        "https://res.cloudinary.com/domt6qtye/video/upload/q_auto/f_auto/v1781939883/WhatsApp_Video_2026-06-20_at_8.44.21_AM_iudaqd.mp4",
+        "https://res.cloudinary.com/domt6qtye/video/upload/q_auto/f_auto/v1781939814/WhatsApp_Video_2026-06-20_at_8.44.25_AM_au2zmu.mp4",
+        "https://res.cloudinary.com/domt6qtye/video/upload/q_auto/f_auto/v1781939704/WhatsApp_Video_2026-06-20_at_8.44.25_AM_1_r1pnns.mp4",
+        "https://res.cloudinary.com/domt6qtye/video/upload/q_auto/f_auto/v1781939751/WhatsApp_Video_2026-06-20_at_8.45.13_AM_gxi2vx.mp4"
+      ],
+      "resultImageUrls": [],
+      "websiteLinks": [],
+      "testimonial": "",
+      "published": true
+    },
+    {
       "id": "o-2-y-hair-fixing",
       "clientName": "O 2 Y Hair Fixing",
       "slug": "o-2-y-hair-fixing",
@@ -480,7 +564,7 @@
         "Problem Solving"
       ],
       "displayOrder": 2,
-      "active": false
+      "active": true
     }
   ],
   "blogPosts": [

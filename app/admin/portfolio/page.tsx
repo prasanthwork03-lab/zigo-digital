@@ -1,8 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
+
 import Link from "next/link";
-import { Edit3, Plus, Trash2 } from "lucide-react";
+import { Edit3, ImageIcon, PlayCircle, Plus, Trash2 } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { deletePortfolioCase } from "@/lib/actions";
 import { getPortfolioCases } from "@/lib/cms";
+import { normalizeMediaUrl, normalizeMediaUrls } from "@/lib/media";
 
 type AdminPortfolioPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -54,11 +57,38 @@ export default async function AdminPortfolioPage({ searchParams }: AdminPortfoli
 
         <div className="mt-8 overflow-hidden rounded-lg border border-[#d9e7f5] bg-white shadow-sm">
           <div className="grid gap-0">
-            {portfolioCases.map((item) => (
-              <div key={item.id} className="grid gap-4 border-b border-[#edf3f8] p-5 last:border-b-0 lg:grid-cols-[1.4fr_0.8fr_0.8fr_auto] lg:items-center">
-                <div>
-                  <h2 className="font-black text-[#0b2447]">{item.clientName}</h2>
-                  <p className="mt-1 text-sm text-[#667789]">{item.shortDescription}</p>
+            {portfolioCases.map((item) => {
+              const videoCount = normalizeMediaUrls(item.videoUrls).length;
+              const imageCount = normalizeMediaUrls(item.galleryImages).length;
+              const resultCount = normalizeMediaUrls(item.resultImageUrls).length;
+
+              return (
+              <div key={item.id} className="grid gap-4 border-b border-[#edf3f8] p-5 last:border-b-0 lg:grid-cols-[1.5fr_0.7fr_0.7fr_auto] lg:items-center">
+                <div className="flex gap-4">
+                  {item.logoImage ? (
+                    <div className="flex h-16 w-20 shrink-0 items-center justify-center rounded-lg border border-[#d9e7f5] bg-[#fbfdff] p-2">
+                      <img
+                        src={normalizeMediaUrl(item.logoImage)}
+                        alt=""
+                        className="max-h-full max-w-full object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : null}
+                  <div>
+                    <h2 className="font-black text-[#0b2447]">{item.clientName}</h2>
+                    <p className="mt-1 text-sm text-[#667789]">{item.shortDescription}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[#eaf4ff] px-2.5 py-1 text-xs font-bold text-[#0b5f9c]">
+                        <PlayCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                        {videoCount} videos
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[#f3f7fb] px-2.5 py-1 text-xs font-bold text-[#526170]">
+                        <ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                        {imageCount + resultCount} images/results
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <p className="text-sm font-semibold text-[#526170]">{item.industry}</p>
                 <span className={`w-fit rounded-full px-3 py-1 text-xs font-bold ${item.published ? "bg-[#f0fbf5] text-[#166534]" : "bg-[#fff7e6] text-[#8a5b00]"}`}>
@@ -83,7 +113,8 @@ export default async function AdminPortfolioPage({ searchParams }: AdminPortfoli
                   </form>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

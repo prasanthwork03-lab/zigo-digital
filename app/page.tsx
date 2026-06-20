@@ -10,10 +10,12 @@ import { ServiceCard } from "@/components/service-card";
 import { getPortfolioCases, getServices } from "@/lib/cms";
 import { processSteps, site, stats } from "@/lib/site-data";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [services, portfolioCases] = await Promise.all([getServices(), getPortfolioCases()]);
   const featuredServices = services.slice(0, 6);
-  const featuredCases = portfolioCases.slice(0, 3);
+  const featuredCases = portfolioCases.filter((item) => item.published).slice(0, 3);
   const clientLogos = logosFromPortfolioCases(portfolioCases);
 
   return (

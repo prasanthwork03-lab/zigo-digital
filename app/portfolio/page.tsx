@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     "Explore Zigo Digital portfolio case studies with client problems, strategy, execution, metrics, and results.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function PortfolioPage() {
   const portfolioCases = await getPortfolioCases();
   const publishedCases = portfolioCases.filter((item) => item.published);

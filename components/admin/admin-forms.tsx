@@ -1,5 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
+
 import type { BlogPost, PortfolioCase, Service, TeamMember } from "@/lib/types";
 import { saveBlogPost, savePortfolioCase, saveService, saveTeamMember } from "@/lib/actions";
+import { getVideoThumbnailUrl, normalizeMediaUrls, readableLink } from "@/lib/media";
+import { ImageIcon, PlayCircle } from "lucide-react";
 
 function inputClass() {
   return "h-11 rounded-lg border border-[#d9e7f5] bg-white px-3 text-sm font-medium outline-none transition focus:border-[#0b5f9c] focus:ring-4 focus:ring-[#0b5f9c]/10";
@@ -29,6 +33,85 @@ function dateTimeValue(value?: string) {
 
 function multilineValue(value?: string[]) {
   return value?.join("\n") ?? "";
+}
+
+function AdminMediaPreview({ item }: { item?: PortfolioCase }) {
+  const videos = normalizeMediaUrls(item?.videoUrls);
+  const images = normalizeMediaUrls(item?.galleryImages);
+  const results = normalizeMediaUrls(item?.resultImageUrls);
+
+  if (!videos.length && !images.length && !results.length) {
+    return null;
+  }
+
+  return (
+    <div className="grid gap-5 rounded-lg border border-[#d9e7f5] bg-[#fbfdff] p-4">
+      <div>
+        <p className="text-sm font-black uppercase text-[#c2932e]">Saved media preview</p>
+        <p className="mt-1 text-xs font-semibold leading-5 text-[#526170]">
+          These thumbnails are generated from the URLs saved for this case study.
+        </p>
+      </div>
+
+      {videos.length ? (
+        <div>
+          <p className="mb-3 text-xs font-black uppercase text-[#0b2447]">Video thumbnails</p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {videos.map((url) => {
+              const thumbnail = getVideoThumbnailUrl(url);
+
+              return (
+                <a
+                  key={url}
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group overflow-hidden rounded-lg border border-[#d9e7f5] bg-white shadow-sm transition hover:-translate-y-1 hover:border-[#0b5f9c] hover:shadow-lg hover:shadow-[#0b5f9c]/10"
+                >
+                  <div className="relative flex aspect-video items-center justify-center bg-[#071827]">
+                    {thumbnail ? (
+                      <img
+                        src={thumbnail}
+                        alt=""
+                        className="h-full w-full object-cover opacity-80 transition group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : null}
+                    <span className="absolute flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#0b5f9c] shadow-lg">
+                      <PlayCircle className="h-7 w-7" aria-hidden="true" />
+                    </span>
+                  </div>
+                  <p className="truncate px-3 py-2 text-xs font-bold text-[#526170]">{readableLink(url)}</p>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+
+      {images.length || results.length ? (
+        <div>
+          <p className="mb-3 inline-flex items-center gap-2 text-xs font-black uppercase text-[#0b2447]">
+            <ImageIcon className="h-4 w-4 text-[#0b5f9c]" aria-hidden="true" />
+            Image previews
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[...images, ...results].map((url) => (
+              <a
+                key={url}
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex aspect-video items-center justify-center overflow-hidden rounded-lg border border-[#d9e7f5] bg-white p-2 shadow-sm transition hover:-translate-y-1 hover:border-[#0b5f9c] hover:shadow-lg hover:shadow-[#0b5f9c]/10"
+              >
+                <img src={url} alt="" className="h-full w-full object-contain" loading="lazy" />
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 export function PortfolioCaseForm({ item }: { item?: PortfolioCase }) {
@@ -137,6 +220,7 @@ export function PortfolioCaseForm({ item }: { item?: PortfolioCase }) {
           placeholder={`https://client-website.com\nhttps://automation-demo-link.com`}
         />
       </Field>
+      <AdminMediaPreview item={item} />
       <Field label="Testimonial">
         <textarea name="testimonial" defaultValue={item?.testimonial} className={textareaClass()} />
       </Field>

@@ -16,6 +16,7 @@ import {
   upsertLocalTeamMember,
 } from "@/lib/cms";
 import { createSupabaseAdminClient } from "@/lib/supabase";
+import { normalizeMediaUrl } from "@/lib/media";
 import type { EnquiryFormState } from "@/lib/types";
 import { slugify } from "@/lib/utils";
 
@@ -47,6 +48,11 @@ const listFromLongForm = (value: FormDataEntryValue | null) =>
   String(value || "")
     .split(/\r?\n|,/)
     .map((item) => item.trim())
+    .filter(Boolean);
+
+const mediaListFromLongForm = (value: FormDataEntryValue | null) =>
+  listFromLongForm(value)
+    .map(normalizeMediaUrl)
     .filter(Boolean);
 
 const isUuid = (value: string) =>
@@ -138,16 +144,17 @@ export async function savePortfolioCase(formData: FormData) {
   const redirectTo = "/admin/portfolio";
   const id = String(formData.get("id") || crypto.randomUUID());
   const metricsSummary = String(formData.get("metrics_json") || "");
-  const galleryImages = listFromLongForm(formData.get("gallery_images"));
-  const videoUrls = listFromLongForm(formData.get("video_urls"));
-  const resultImageUrls = listFromLongForm(formData.get("result_image_urls"));
-  const websiteLinks = listFromLongForm(formData.get("website_links"));
+  const galleryImages = mediaListFromLongForm(formData.get("gallery_images"));
+  const videoUrls = mediaListFromLongForm(formData.get("video_urls"));
+  const resultImageUrls = mediaListFromLongForm(formData.get("result_image_urls"));
+  const websiteLinks = mediaListFromLongForm(formData.get("website_links"));
+  const logoImageUrl = normalizeMediaUrl(String(formData.get("logo_image_url") || ""));
   const localPayload = {
     id,
     clientName: title,
     slug,
     industry: String(formData.get("industry") || ""),
-    logoImage: String(formData.get("logo_image_url") || "") || undefined,
+    logoImage: logoImageUrl || undefined,
     shortDescription: String(formData.get("short_description") || ""),
     problem: String(formData.get("problem") || ""),
     goal: String(formData.get("goal") || ""),
@@ -181,7 +188,7 @@ export async function savePortfolioCase(formData: FormData) {
     client_name: title,
     slug,
     industry: String(formData.get("industry") || ""),
-    logo_image_url: String(formData.get("logo_image_url") || ""),
+    logo_image_url: logoImageUrl,
     short_description: String(formData.get("short_description") || ""),
     problem: String(formData.get("problem") || ""),
     goal: String(formData.get("goal") || ""),

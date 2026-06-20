@@ -7,6 +7,7 @@ import {
   services as fallbackServices,
   teamMembers as fallbackTeamMembers,
 } from "@/lib/site-data";
+import { normalizeMediaUrl, normalizeMediaUrls } from "@/lib/media";
 import type {
   AnalyticsSummary,
   AnalyticsVisit,
@@ -154,17 +155,17 @@ function mapPortfolioCase(record: DataRecord): PortfolioCase {
   const clientName = readString(record, "client_name");
   const slug = readString(record, "slug", slugify(clientName));
   const metricsSummary = metricSummaryFromJson(record.metrics_json);
-  const galleryImages = readArray(record, "gallery_images");
-  const videoUrls = readArray(record, "video_urls");
-  const resultImageUrls = readArray(record, "result_image_urls");
-  const websiteLinks = readArray(record, "website_links");
+  const galleryImages = normalizeMediaUrls(readArray(record, "gallery_images"));
+  const videoUrls = normalizeMediaUrls(readArray(record, "video_urls"));
+  const resultImageUrls = normalizeMediaUrls(readArray(record, "result_image_urls"));
+  const websiteLinks = normalizeMediaUrls(readArray(record, "website_links"));
 
   return {
     id: readString(record, "id", crypto.randomUUID()),
     clientName,
     slug,
     industry: readString(record, "industry"),
-    logoImage: readString(record, "logo_image_url") || readString(record, "cover_image_url") || undefined,
+    logoImage: normalizeMediaUrl(readString(record, "logo_image_url") || readString(record, "cover_image_url")) || undefined,
     shortDescription: readString(record, "short_description"),
     problem: readString(record, "problem"),
     goal: readString(record, "goal"),
@@ -176,10 +177,10 @@ function mapPortfolioCase(record: DataRecord): PortfolioCase {
     resultsSummary: readString(record, "results_summary"),
     metrics: parseMetricsSummary(metricsSummary),
     coverLabel: readString(record, "cover_label", clientName),
-    galleryImages: galleryImages.length ? galleryImages : arrayFromJson(record.metrics_json, "galleryImages"),
-    videoUrls: videoUrls.length ? videoUrls : arrayFromJson(record.metrics_json, "videoUrls"),
-    resultImageUrls: resultImageUrls.length ? resultImageUrls : arrayFromJson(record.metrics_json, "resultImageUrls"),
-    websiteLinks: websiteLinks.length ? websiteLinks : arrayFromJson(record.metrics_json, "websiteLinks"),
+    galleryImages: galleryImages.length ? galleryImages : normalizeMediaUrls(arrayFromJson(record.metrics_json, "galleryImages")),
+    videoUrls: videoUrls.length ? videoUrls : normalizeMediaUrls(arrayFromJson(record.metrics_json, "videoUrls")),
+    resultImageUrls: resultImageUrls.length ? resultImageUrls : normalizeMediaUrls(arrayFromJson(record.metrics_json, "resultImageUrls")),
+    websiteLinks: websiteLinks.length ? websiteLinks : normalizeMediaUrls(arrayFromJson(record.metrics_json, "websiteLinks")),
     testimonial: readString(record, "testimonial"),
     published: Boolean(record.published),
   };

@@ -1,56 +1,21 @@
-/* eslint-disable @next/next/no-img-element */
-
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, CheckCircle2, ExternalLink, ImageIcon, PlayCircle, Quote } from "lucide-react";
+import { ArrowRight, CheckCircle2, ExternalLink, ImageIcon, Quote } from "lucide-react";
 import { ClientLogoMarquee, logosFromPortfolioCases } from "@/components/client-logo-marquee";
+import { ProofImageCard, VideoProofCard } from "@/components/proof-media";
 import { PublicShell } from "@/components/public-shell";
 import { Reveal } from "@/components/reveal";
 import { getPortfolioCases } from "@/lib/cms";
+import { normalizeMediaUrl, normalizeMediaUrls, readableLink } from "@/lib/media";
 import { site } from "@/lib/site-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-function getVideoEmbedUrl(url: string) {
-  try {
-    const parsedUrl = new URL(url);
-    const hostname = parsedUrl.hostname.replace("www.", "");
-
-    if (hostname === "youtu.be") {
-      const videoId = parsedUrl.pathname.split("/").filter(Boolean)[0];
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-    }
-
-    if (hostname.endsWith("youtube.com")) {
-      const watchId = parsedUrl.searchParams.get("v");
-      const pathParts = parsedUrl.pathname.split("/").filter(Boolean);
-      const embedId = watchId || (pathParts[0] === "shorts" || pathParts[0] === "embed" ? pathParts[1] : "");
-      return embedId ? `https://www.youtube.com/embed/${embedId}` : null;
-    }
-
-    if (hostname.endsWith("vimeo.com")) {
-      const videoId = parsedUrl.pathname.split("/").filter(Boolean)[0];
-      return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function readableLink(url: string) {
-  try {
-    const parsedUrl = new URL(url);
-    return parsedUrl.hostname.replace("www.", "");
-  } catch {
-    return url;
-  }
-}
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   const portfolioCases = await getPortfolioCases();
@@ -84,12 +49,12 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
   }
 
   const clientLogos = logosFromPortfolioCases(portfolioCases);
-  const heroLogo = item.logoImage ?? site.logo;
+  const heroLogo = normalizeMediaUrl(item.logoImage ?? site.logo);
   const heroLogoAlt = item.logoImage ? `${item.clientName} logo` : "Zigo Digital logo";
-  const galleryImages = item.galleryImages ?? [];
-  const videoUrls = item.videoUrls ?? [];
-  const resultImageUrls = item.resultImageUrls ?? [];
-  const websiteLinks = item.websiteLinks ?? [];
+  const galleryImages = normalizeMediaUrls(item.galleryImages);
+  const videoUrls = normalizeMediaUrls(item.videoUrls);
+  const resultImageUrls = normalizeMediaUrls(item.resultImageUrls);
+  const websiteLinks = normalizeMediaUrls(item.websiteLinks);
   const hasProofMedia = Boolean(galleryImages.length || videoUrls.length || resultImageUrls.length || websiteLinks.length);
 
   return (
@@ -259,34 +224,9 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             {videoUrls.length ? (
               <Reveal delay={0.05}>
                 <div className="mt-8 grid gap-5 lg:grid-cols-2">
-                  {videoUrls.map((url) => {
-                    const embedUrl = getVideoEmbedUrl(url);
-
-                    return (
-                      <div key={url} className="overflow-hidden rounded-lg border border-[#d9e7f5] bg-[#fbfdff] shadow-sm">
-                        {embedUrl ? (
-                          <iframe
-                            src={embedUrl}
-                            title={`${item.clientName} work video`}
-                            className="aspect-video w-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowFullScreen
-                          />
-                        ) : (
-                          <a
-                            href={url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex min-h-56 flex-col items-center justify-center gap-3 p-6 text-center hover:bg-[#eaf4ff]"
-                          >
-                            <PlayCircle className="h-10 w-10 text-[#0b5f9c]" aria-hidden="true" />
-                            <span className="text-sm font-bold text-[#0b2447]">Open video proof</span>
-                            <span className="text-xs font-semibold text-[#667789]">{readableLink(url)}</span>
-                          </a>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {videoUrls.map((url) => (
+                    <VideoProofCard key={url} url={url} title={`${item.clientName} work proof video`} />
+                  ))}
                 </div>
               </Reveal>
             ) : null}
@@ -300,20 +240,11 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                   </div>
                   <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {galleryImages.map((url) => (
-                      <a
+                      <ProofImageCard
                         key={url}
-                        href={url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group overflow-hidden rounded-lg border border-[#d9e7f5] bg-[#fbfdff] shadow-sm"
-                      >
-                        <img
-                          src={url}
-                          alt={`${item.clientName} work proof`}
-                          className="h-64 w-full object-contain p-3 transition group-hover:scale-[1.02]"
-                          loading="lazy"
-                        />
-                      </a>
+                        url={url}
+                        alt={`${item.clientName} work proof`}
+                      />
                     ))}
                   </div>
                 </div>
@@ -326,14 +257,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                   <p className="text-sm font-black uppercase text-[#c2932e]">Ad result proof</p>
                   <div className="mt-5 grid gap-5 sm:grid-cols-2">
                     {resultImageUrls.map((url) => (
-                      <a key={url} href={url} target="_blank" rel="noreferrer" className="overflow-hidden rounded-lg bg-white p-3 shadow-sm">
-                        <img
-                          src={url}
-                          alt={`${item.clientName} campaign result`}
-                          className="h-72 w-full object-contain"
-                          loading="lazy"
-                        />
-                      </a>
+                      <ProofImageCard key={url} url={url} alt={`${item.clientName} campaign result`} />
                     ))}
                   </div>
                 </div>

@@ -40,7 +40,7 @@ export function PortfolioCard({ item }: { item: PortfolioCase }) {
           href={`/portfolio/${item.slug}`}
           className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#0b5f9c]"
         >
-          View Case Study
+          View Our Work
           <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
         </Link>
       </div>

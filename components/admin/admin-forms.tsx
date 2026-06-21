@@ -2,7 +2,7 @@
 
 import type { BlogPost, PortfolioCase, Service, TeamMember } from "@/lib/types";
 import { saveBlogPost, savePortfolioCase, saveService, saveTeamMember } from "@/lib/actions";
-import { getVideoThumbnailUrl, normalizeMediaUrls, readableLink } from "@/lib/media";
+import { getVideoEmbedUrl, getVideoThumbnailUrl, normalizeMediaUrls, readableLink } from "@/lib/media";
 import { ImageIcon, PlayCircle } from "lucide-react";
 
 function inputClass() {
@@ -59,15 +59,10 @@ function AdminMediaPreview({ item }: { item?: PortfolioCase }) {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {videos.map((url) => {
               const thumbnail = getVideoThumbnailUrl(url);
+              const embedUrl = getVideoEmbedUrl(url);
 
               return (
-                <a
-                  key={url}
-                  href={url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group overflow-hidden rounded-lg border border-[#d9e7f5] bg-white shadow-sm transition hover:-translate-y-1 hover:border-[#0b5f9c] hover:shadow-lg hover:shadow-[#0b5f9c]/10"
-                >
+                <div key={url} className="overflow-hidden rounded-lg border border-[#d9e7f5] bg-white shadow-sm">
                   <div className="relative flex aspect-video items-center justify-center bg-[#071827]">
                     {thumbnail ? (
                       <img
@@ -76,13 +71,33 @@ function AdminMediaPreview({ item }: { item?: PortfolioCase }) {
                         className="h-full w-full object-cover opacity-80 transition group-hover:scale-105"
                         loading="lazy"
                       />
+                    ) : embedUrl ? (
+                      <iframe
+                        src={embedUrl}
+                        title={`${readableLink(url)} video preview`}
+                        className="h-full w-full border-0 bg-white"
+                        loading="lazy"
+                        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                      />
                     ) : null}
-                    <span className="absolute flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#0b5f9c] shadow-lg">
-                      <PlayCircle className="h-7 w-7" aria-hidden="true" />
-                    </span>
+                    {!embedUrl || thumbnail ? (
+                      <span className="absolute flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#0b5f9c] shadow-lg">
+                        <PlayCircle className="h-7 w-7" aria-hidden="true" />
+                      </span>
+                    ) : null}
                   </div>
-                  <p className="truncate px-3 py-2 text-xs font-bold text-[#526170]">{readableLink(url)}</p>
-                </a>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 truncate px-3 py-2 text-xs font-bold text-[#526170] hover:text-[#0b5f9c]"
+                  >
+                    {!thumbnail && embedUrl ? (
+                      <PlayCircle className="h-4 w-4" aria-hidden="true" />
+                    ) : null}
+                    <span className="truncate">{readableLink(url)}</span>
+                  </a>
+                </div>
               );
             })}
           </div>
@@ -196,12 +211,12 @@ export function PortfolioCaseForm({ item }: { item?: PortfolioCase }) {
           placeholder={`https://...\nhttps://...`}
         />
       </Field>
-      <Field label="Video embed links, YouTube links, or Vimeo links">
+      <Field label="Video embed links, YouTube, Instagram, or Vimeo links">
         <textarea
           name="video_urls"
           defaultValue={multilineValue(item?.videoUrls)}
           className={textareaClass()}
-          placeholder={`https://www.youtube.com/watch?v=...\nhttps://vimeo.com/...`}
+          placeholder={`https://www.instagram.com/reel/...\nhttps://www.youtube.com/watch?v=...\nhttps://vimeo.com/...`}
         />
       </Field>
       <Field label="Meta Ads / Google Ads result screenshot URLs">

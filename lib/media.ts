@@ -56,6 +56,13 @@ export function getVideoEmbedUrl(url: string) {
       return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
     }
 
+    if (hostname.endsWith("instagram.com")) {
+      const [postType, shortcode] = parsedUrl.pathname.split("/").filter(Boolean);
+      return ["p", "reel", "tv"].includes(postType) && shortcode
+        ? `https://www.instagram.com/${postType}/${shortcode}/embed/`
+        : null;
+    }
+
     return null;
   } catch {
     return null;

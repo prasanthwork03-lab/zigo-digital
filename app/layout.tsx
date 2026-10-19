@@ -56,6 +56,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
+      <head>
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-ZYZDBD3Y0D"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-ZYZDBD3Y0D');`,
+          }}
+        />
+      </head>
       <body className="bg-[#fbfdff] text-[#16202a] antialiased">
         <VisitTracker />
         {children}
